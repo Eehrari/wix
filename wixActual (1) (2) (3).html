@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html>
+<style>
+    html {
+        font-size: 20px;
+        /* px means "pixels": the base font size is now 10 pixels high  */
+        font-family: "Lucida Console", sans-serif;
+        /* this should be the rest of the output you got from Google fonts */
+    }
+
+    p,
+    li,
+    label {
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: 1px;
+    }
+
+
+    body {
+        letter-spacing: 3px;
+    }
+
+    @media (max-width: 700px) {
+        body {
+
+            font-size: 10px;
+            display: block;
+            width: auto;
+        }
+
+        label,
+        input {
+            float: left;
+            width: auto;
+            text-indent: 3%;
+
+        }
+    }
+
+    .letters {
+        margin-left: 55px;
+    }
+
+    @media screen and (min-width: 576px) and (max-width: 767px) {
+        * {
+            font-size: smaller;
+            font-weight: 550;
+        }
+
+        .texts {
+            color: rgb(46, 141, 101);
+        }
+
+        .buttons {
+            padding: 5px;
+            font-size: 15px;
+            border-radius: 1px;
+        }
+
+        .buttons-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .button1 {
+            margin-top: -550px;
+            margin-left: 20%;
+            height: 25px;
+
+        }
+
+        .button2 {
+            margin-top: -550px;
+            margin-left: 38%;
+            height: 25px;
+        }
+
+        .button3 {
+            margin-top: -550px;
+            margin-left: 56%;
+            height: 26px;
+        }
+
+        .letters {
+            font-size: 15px;
+            padding-bottom: 4px;
+        }
+
+        .x {
+            font-size: small;
+            letter-spacing: 2px;
+        }
+
+        .y {
+            letter-spacing: 1.4px;
+            font-size: small;
+        }
+
+        .cryptAlign {
+            font-size: small;
+            margin-left: 15%;
+        }
+
+        .cryptogram-container {
+            margin-top: 65px;
+        }
+
+        .countDisplay {
+            font-size: x-small;
+        }
+
+        #done {
+            margin-left: 20%;
+        }
+    }
+
+    @media screen and (min-width: 767px) and (max-width: 991px) {
+        * {
+            font-size: large;
+        }
+
+        .letters {
+            font-size: large;
+            font-weight: 550;
+        }
+
+        .buttons {
+            font-size: medium;
+        }
+
+        .x {
+            font-size: small;
+            letter-spacing: 2.4px;
+        }
+
+        .y {
+            letter-spacing: 1.9px;
+            font-size: small;
+        }
+
+        .button2 {
+            position: relative;
+            right: -27%;
+        }
+
+        .button3 {
+            position: relative;
+            left: -17%;
+        }
+
+        .cryptAlign {
+            margin-left: 20%;
+        }
+
+    }
+
+    @media screen and (min-width: 0px) and (max-width: 575px) {
+        * {
+            font-size: smaller;
+        }
+
+        .button1 {
+            margin-top: -415px;
+            margin-left: 15%;
+            font-size: small;
+        }
+
+        .button2 {
+            margin-top: -415px;
+            margin-left: 50%;
+            font-size: small;
+        }
+
+        .button3 {
+            margin-top: -393px;
+            margin-left: 25%;
+            font-size: small;
+        }
+
+        .cryptAlign {
+            margin-left: 8%;
+        }
+
+        .x {
+            font-size: x-small;
+            letter-spacing: 1.5px;
+        }
+
+        .y {
+            font-size: x-small;
+            letter-spacing: 1px;
+        }
+
+        .letters {
+            font-size: small;
+        }
+
+        .theInputs {
+            width: 23px;
+            height: 23px;
+            font-size: xx-small;
+        }
+
+        .cryptogram-container {
+            margin-top: 80px;
+        }
+
+        .countDisplay {
+            font-size: small;
+        }
+
+        .cryptAlign {
+            font-size: small
+        }
+    }
+
+    .btn-1:hover {
+        color: #ffffff;
+    }
+
+    .buttons {
+        padding: 0.3%;
+        border-radius: 10px;
+    }
+
+    .x {
+        color: rgb(32, 101, 99);
+    }
+
+    .y {
+        color: rgba(113, 159, 179, 0.968);
+    }
+</style>
+
+<head>
+    <meta charset="utf-8">
+    <title>NYT Cryptogram Helper</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!--script type="text/javascript" src="cryptSolutions.js"></script-->
+    <!--script type="text/javascript" src="cryptTextStorage.js"></script-->
+    <script>
+        document.addEventListener('pointerdown', (event) => {
+            if (event.pointerType === "mouse") { enable(); }
+            if (event.pointerType === "touch") { enable(); }
+            if (event.pointerType === "pen") { enable(); }
+        });
+        function disable() {
+            // To get the scroll position of current webpage
+            TopScroll = window.pageYOffset || document.documentElement.scrollTop;
+            LeftScroll = window.pageXOffset || document.documentElement.scrollLeft,
+
+                // if scroll happens, set it to the previous value
+                window.onscroll = function () {
+                    window.scrollTo(LeftScroll, TopScroll);
+                };
+        }
+        function enable() {
+            window.onscroll = function () { };
+        }
+
+        var Crypt = {
+            Jan26_2023: "FJMKFFKI KPW YOZKS NWZMCWSZ KR K YTU KNCOE K \nCMWON RCTPO MWR SOA EOI RDMAWSS YWDUDPO.",
+            Jan24_2023: "BS AHUD LTODY HU H'Y TDDM VPD YRI GRAQ. H ALT \nUQLGGDXILTVDY. H MDKDX OMDA HV WRJQY YR VPLV!",
+            Jan19_2023: "KZUCE QVJC DZEMCCA MZMOCMUE WOVAOCU EKCA V \nGCMOPAX VQE VW V DBVXZMQ GVAU JVMPSVGOPACA.",
+            Jan17_2023: "RGGE XLO BRA DXV MOZ X GSEDRAVZOG JLSDO RV X \nEQOG, NAZ BRA'QQ JLRNXNQB VOOG ZRNRMMXV.",
+            Jan12_2023: "CZ PSM ZCQF NKHWV KH E PXGKLEJ BMLN CZ LEFBV, CHJX \nPSM NKHW CZ SMEFPV KVH'P VGCFPKHW E UQVPELSM.",
+            Jan10_2023: 'TFSGQG NSQ "FKWYMNOQ RFGQ KSQNOTQSG," IQNRYRM \nOTQE VNRRFO KSQNOTQ OTSFPMT OTQYS IFPOTG.',
+            Jan05_2023: 'TOGF UN HRTNGL VXZZN TPEOGE UG QKKZVNG, OG \nERNE, "EK HKFQ, VLK! P\'HH VG EXPFQ NR!"',
+            Jan03_2023: "OXBFU HSF YHS THSVFS PIFK OIF UNK, JLLK HKB FHSOI \nHTXVK BNSXKV H KFP LS YNTT JLLK.",
+            Dec29_2022: 'UQFPDZUUZ\'K HEVUF VC BQF "KBZA PZAK" REHVFK \nUERDVCFK DZYXFA, KFZJ ZCY PZJAOK KEOCYK.',
+            Dec27_2022: "SPB UQEVQIB RUISUA QA UI UGEXIFC TXE SPB RZBBIAVUIY \nUIY IXESPBEI SBEEQSXEF UBEQUV ABEDQGBA.",
+            Dec22_2022: "TDXTZKXHKT HW XUN RGTDNX'W GTZONWX MNWNZX. HX \nUTW GNWW XUTD XND HDKUNW CB RZNKHRHXTXHCD T QNTZ.",
+            Dec20_2022: "DAR VUFL'K KAFUF VLR CVKAKICY HL SEUVKF YAESY? \nCFQVIYF, YEWWR, SEUVKFY DVYA IS HL YAHUF.",
+            Dec15_2022: "XGVDBTFDIIZ NLWDETBO, LPYLETBN DBM GVRWA OGPAMN \nDAW DFVPDIIZ SAPTV. VRWZ'AW VZLWN GS XWAATWN.",
+            Dec13_2022: "LQORUJQ JYQUG OWEXTGUJUEX VEL SZOUBUVEOYUR, \nEWJ WEQ WC JYQ IQVJKQO TVO VIKQ JW GQVL SZOUB.",
+            Dec08_2022: "FNEZQC, CBSGQSD KIE FBUBI NOVBS BHBCBIOF VKUB IN \nHBOOBSF ZI GNCCNI PZOV OVBZS FDCJNHF.",
+            Dec06_2022: "XG'N BMPBAN CWWK WBNA RIU VW GI RBMM BNMWWH. \nBG GJXN HIXKG X TBK OI XG PXGJ VA WAWN TMINWO.",
+            Dec01_2022: 'FDKB SRLBKE ALSJ EOK KUYLQKW, QDKZ "AVAYVOB" - \nARJDLBS VPP QDK SOVRBW FLQD ENN PVRO PKKQ.',
+            Nov29_2022: "U EWCNUAG'O ABZ EWLSJLWG NQHHWZO ULB U KJVB\nKQD. DKBG'LB LBUHHG CUTQAV KBUSHQABO!",
+            Nov22_2022: "LADUOXJ'C YZZR PFREYXKX FRK CFOAJR'C YZZR OUOFR \nFJX HFJPXJ OGFR OGX DHFRXO YXJBAJE.",
+            Nov17_2022: "RSTG SYDDFDFCXKPOTO XWT PGNTWRXCTW, CSTYW \nTXWO XGN GFOCWYEO QEFOT CF JTTD CST RXCTW FPC.",
+            Nov15_2022: "GB GQ SJBQ KY, WE UEY QIY DGEBQ DGPY ZWECLUFB \nUDQYE QIY ZYYCYTL QIY KWBQ LGDDGOJVQ?",
+            Nov10_2022: 'VTBXNW: "MAVVF, DEQ FTZ QEVN BRT HWTQTZQK?” \nKTQ: "RXT, VN?" VTBXNW: "TX, QADN MTG!"',
+            Nov08_2022: "CYBBYNQ KJNNKGIFN JIR JTNG CTYKLGGDN. CTYKKYBE \nFQR KJERN NQGPN J PJTDYBE WGGNR JBYWJFYGB.",
+            Nov03_2022: "OFUMFOJ EN ECO KFZ SVFJUCOCJ VUTF WFFK UHUSVFSRG, \nCKOFJHEKJRTF, RKMRNNFOFKS UKM WEOFM.",
+            Nov01_2022: 'OYLHJ PYLHWQM JQTV "URH UHWLKMYUQW" SQW OCJU Y \nVQTTYW QM URH PQMVKUKQM RH PQCTV VKWHPU KU.',
+            Oct27_2022: "F'TA QAAE XWEPFEV W QWQD ZIG W ZAX DAWGJ, QRP UD \nXFZA WGVRAJ XFPB UA. JBA FEJFJPJ IE ZIGATAG.",
+            Oct25_2022: 'KTBBVE AHXEFG\'B EWPVGIV OTCOWV BH "BHN IBHCN," \nAUWPU WI AUN WB WGPEXFVI OH ZVVZ WGIBVTF.',
+            Oct20_2022: "K JKZDXJKZAHAKR TDXGDXVW VUSRWXW SG DAT \nOUVZE-RARX TDXXG - KRW ZDXR DX DKW OAOZE.",
+            Oct18_2022: "IABE TIFE GUIFOJYN LXQBO QIYV, GUB YXQB EXABE \nTQIKO GUEIFVU BQBABY JTEXMJY MIFYGEXBO.",
+            Oct13_2022: 'JANLL THLMBOFRDG, R KNNF JKODDOF, VFNLO DOLLOFJ \nLN IHJ ADNJO TFHOUG "ORFUOJL" IOPHUBVRC.',
+            Oct11_2022: "LX RHTMJQH AV ZQQBKX EGHEAZ TG IQUEMASQ IPLRQHV. \nJQ'KK VMTB EM ITMJAIU MT ESTAZ MJQL.",
+            Oct06_2022: 'OIWS PSKBPCSS IX "OSOBWS OCPSSC": "SPXVS, TI ZIL \nHBXC CI EPBJ OIWS VMS MPSBW?" "OLPS, JSPC!"',
+            Oct04_2022: "G LYGB NXGODYOMGQP SJCYJDYL DUY BIIDMGHH UXLLHY \nDI MHIQP USF QGHHF BOIW DUY IEEIJYJDF' CSYK.",
+            Sep29_2022: "HDGY WX CXO LRY HDRA CXO FPXZZ GA RERNDGAY HQYD \nPDQAXFRPXZ? LRR...RERNDQAX!",
+            Sep27_2022: "BHGEJGM, ZFH RBXIIHRZ CIXUHZ SU DJG RDIXG RMRZHB, \nSR DUIM RISVFZIM IXGVHG ZFXU HXGZF'R BDDU.",
+            Sep22_2022: "AQS EQZGSL, ELSQJL, NQMGJQS JGMF, UGWJDMWSAMWGS \nQSX QSXLZZQ QZW MDW LSUF SQMGLSA PGMDLYM QGZRLZMA.",
+            Sep20_2022: 'Q BCLVYF IMDF WV JV TMKDF YQWV ISM AICKTIKCVA IJQI \nJMDF SQIVC. L CVGDLVF, "SVDD, FQW!"',
+            Sep15_2022: "MDMGQMAV MLJQA GYQ DSVMDS JLUDV LEGQU L \nBQLGGRQ RLMARVUA GV XYVJ DG VXQA UQMG.",
+            Sep13_2022: "G EPKQGVWOPKOS MIZFSMU QCM UFOECGIJ ACMI G AMIQ \nQF JMPAFKOU. LFK CFWKJ AM ZWJQ VOGVXMU.",
+            Sep08_2022: "ZKCQ JQKJGQ NEFQ HEGLQY KT INQ ZKKT (IHQGFQ) INET \nNEFQ DQQT DKCT UT ETIECOIUOE (QGQFQT).",
+            Sep06_2022: "OKYYNE RLP XKMP REN WIN KLMA LKL-ZSMGNEA-OKMKENP \nTNWRMZ KL WIN YNESKPSO WRDMN.",
+            Sep01_2022: '"ECGHFA, EF\'P WGLF C DGSF MBHHWF BU SOCAPBDDCZ, \nIWFCXF." "EOCH ZFCA, XGA?" "IAFUFACMWZ AGROH DBE."',
+            Aug30_2022: "QNIXWLPR NLWVIQ NKQ KEEIKXIS CG VLXI UCWVQ ONKG KGA \nLONIX UCPOCLGKW PNKXKPOIX. QIPLGS-VLQO: SXKPFWK.",
+            Aug25_2022: "G BYZOFR YSEJ UMZNM CYJ BZEGJC OMGZM NZOFRM'C \nBOLEGEJ. CYJLJ NJLJ FZCB ZV LJR VFSXB.",
+            Aug23_2022: 'FZ KVD XQL FLNX-NLRRWHP HBYLR BK VRR XWGL, "CBH \nJEWUBXL" QVN NBRC BYLD QVRK V FWRRWBH IBSWLN.',
+            Aug11_2022: "NUGE HJKJM JP VEJHRFOCV ZJ LSGMV NSGM? JJU, \nEMFHR TDSVEFJO! EUSA UGXS LSGM PSSE.",
+            Aug09_2022: 'E PVREK WLKJQPSVK YECNO SKJV E JEFLPK, PESOLO JYV \nXSKBLPO EKH OEMO, "XSFL DLLPO, ZCLEOL."',
+            Aug04_2022: "HTILA L VTNBLG QLF BF L UGTXF DEBH KOGI L ITTP \nTROF MTP QO. B HKTECKH, XKLH L FBUO VODHOP.",
+            Aug02_2022: 'TLTJU QKNSXNC SBANXNUQ GQ SGKHSNVTX "QBVTZOGSD-\nDNZT," GVICUGSD ZONZ ANZTJDNZT ANQ NFBEZ ANZTJ.',
+            Jul28_2022: 'ABRP CDC KRZ-F KXEWMRNMZ ERMM BDG HDNMJNDVUC \nLVJXNV PBVDN AVCCDUH? BDG "JVZXUEV."',
+            Jul26_2022: "CZCDHC GYU YGZV NCD UNS ZYGPSDU OYCDUZMGS, MU \nNCD IYWS OYCDU UNCG STSWV YUNSW DUCUS OYIRMGSX.",
+            Jul21_2022: '"EKLOW" EZK "EKLDT" UDVC YOEZ, QLVOMEQQB, "VD PDK," \nJCLQO "PDDKUBO" LT TCDMV IDM "PDK UO JLVC BO."',
+            Jul19_2022: "BJTL GZ AZD VTEE T CZVS ICZDQ BJZMN RZDC RTWZDM \nWNWXNCM GZY'L MPYI? WZDYL CDMJWZCN.",
+            Jul14_2022: "PVF CXPPXZ XQ HBUF FLKF KI VKEVFL PVBO PVF INLQBJF \nXQ OFBLCD HBUF XOPBLKX.",
+            Jul12_2022: "TMQ WZ LWV VMUAMDLO OUZMTV' RDQQJFZMVQ QAAQOW, \nNQJMV LV WFQ FZWWQVW HUEJQW LJ ZMD VZUED VIVWQX.",
+            Jul07_2022: 'DTX GPJZ "RTXRELMDX" RPLXV NJPL DTX CXJVOMH \n"VTMT LMD," GTORT LXMHV "DTX EOHY OV ZXMZ."',
+            Jul05_2022: "YGF IEUYFJWFU SP RFUY-UFAAWDC HXYGSJ HCHYGH \nQGJWUYWF GHBF USAO LFAA SBFJ YLS RWAAWSD QSVWFU.",
+            Jun30_2022: "AYVSOVX YKUYVBYMSYD FYAUYVNFOVY DEBMWD GL \nGHYV N FPGODNMT TYWVYYD LNPVYMPYBF.",
+            Jun28_2022: "HBZWREOPFA XWPW OYHW NJ PWAGEW NUW FPJXSBSR \nUBQQBW WDWS NUJERU UW XOA QPWNNC ZOP JEN.",
+            Jun23_2022: "GZYSJPV'D FVPRJ VPI DYLJ SD R DJLVU KRVFPV JARB \nPRVJA JARJ ARD VRFPI QLV AZBIVPID LQ NPRVD.",
+            Jun21_2022: 'IXTOV EKVTOVJY UKV GUMMVZ "CKUOMVKY" SVGUHYV \nCPVN JVKV XKOWODUMMN YPXJD URCVK CPV RVUCHKV.',
+            Jun16_2022: "O'TT STYSDE FSXC S EZCVOST ZTSVC OU BD FCSJR KNJ \nBD OURCJXCURJOVITSJ ECZRIB.",
+            Jun14_2022: "XRVXFM, FCN MDAT, HJ LZC DFRM JLXLC EXWHLXR LZXL \nCFGJ HF HLJ DNF JLXLC'J WDJLXR XVVACOHXLHDF.",
+            Jun09_2022: "FJK ZENNWIV TFEIKT FEEH FJKWZ IRYK OZEY R TEIV UG \nPJWPRVE UNBKTYRI YBSSG XRFKZT.",
+            Jun07_2022: "MJHT PYHE B UHXKVBU NYOH WKUT RTWY B PBP NYOH? \nMJHT RW FHGYDHE BCCBUHTW.",
+            Jun02_2022: "L AKLVP JPZZQ TKVRYKQQ RZJONKFZJ KPJ PLJPZ KV \nNIOU YBJKO: \"K'Y L FKA YZPLQ GLV\".",
+            May31_2022: "GXI XTAXIJG VQO USLIJG CSTQGJ TQ GXI PSQGTQIQGVU \nFQTGIO JGVGIJ VNI MSGX TQ TQBS PSFQGB, PVUTHSNQTV.",
+            May24_2022: "NUWWPOQU UW JGC PZFX WJVJC JGVJ EPQLCQW VW NVZX \nPJGCQ WJVJCW VW UJ GVW FCJJCQW UZ UJW ZVNC.",
+            May19_2022: "YAKOXKENCH XG KGVXPGE CNZP RPCP JKXO EN \nPGONCHP VNZZPCVXKA JCNOTVEH.",
+            May17_2022: "UXIZFDNVW IHS TFDE AQS YV TFNZSDYW FD YGS \nZFLHVWLVTFL IXNIS IDA RHFDS WGHFZT YGIY YGSP SIY.",
+            May12_2022: "JCB OBXJHBV DBXNHS NBEDFJBL XJ BNFK KHXTJMD'V \nABLLFDP, ACBNB XHH OEJ RMCD HBDDMD THXSBL.",
+            May10_2022: "R TFIY F LSRHHPREB XYFS GX YPYIFUGSC, CG R'IY \nCUFSUYK UFMREB CUYHC UG FIGRK UTYN.",
+            May05_2022: "FRPM FCVPI JO WTJEPK JM XPIT NICBJVL, VRP BCDTI YTIAO \nC ECINP WHWWEP CMK UEJMNO VT VRP RPCV OTHIUP.",
+            May03_2022: "PVC GOROCLTWCLWT KWN XVR PVC QPF PT HLCRK \nUPTRCPZ. LR'N XWCR PJ WT WTRL-ZLRROC UWDXWLFT.",
+            Apr28_2022: "AJC JQGBP, N R-YJNOCP XGLC LCNI AJC AGLHRC, BY AJC \nGLKQ JRZNL XGLC LGA TGLLCTACP AG NLGAJCI.",
+            Apr26_2022: "(NGN HPLF GRFVY.) BPQ NPFU YBF AGD KD YBF APPD \nWFY BKU BGKV TOY? FTRKJUF KY.",
+            Apr21_2022: "CFU-HDFLHA FC HDR QRCH JICCFQWR HFVR IK O \nLRNZWOL OKOWIN GWIGB - DOKYC YIPK.",
+            Apr19_2022: "EAT CLXM 'TVSLC' TJQYETM STHLXT YADBTYGTDXT, SOE \nAQY QY EAT HQXYE BPLCP OYT LH QE DY D ZTXS.",
+            Apr14_2022: "HGQYORNFGJ, NJ TDDTJIGNR Q FGINSGJ, END \nYHGMGJNRRW PNRRTL RNPIYPUHYST NJL IUTJ FGINSGJ M.",
+            Apr12_2022: "SPMVEKF URB ITUUTD TW M RTU UJMX TW IJTHKEBO EK \nEVB HMUBJ HEPP DMCB URBD BZUJM JEVR MKN WQNFX.",
+            Apr07_2022: "BSO QGOOMN AWHEBOGFYR DYE YVVJEOM WU XGWFWBZRQ \nSZE WDR ESOAAUZES ZRBOGOEBE.",
+            Apr05_2022: "MOH WJBY ARXR'V GRJP PYIXV PHZPHVHIM XHPQWI \nWJMRQWEHPV MOWM QHPXHB MR GRPQ RIH KRQZWIF.",
+            Mar15_2022: "XD IZBXO GQDDJO SXE DIP ZJMM X ZPXPTJPPJ UJRIOJ \nIRRJOQDC QP PI PKJ XBXLJSE RIO X LIMMXO.",
+            Mar31_2022: "JLXNXY, GPCY'Y KDDUC GXXD, KY P GXYSMV WPCZ-FCPV \nXNTUQS YLPJUW MKZU P JXSPSX.",
+            Mar29_2022: "ZCS GNVV FVGFZK KUFZ ZCSBL NH ZCS LPU POPEMNKP,\nPFU XECXPEVZ FBJ VNP FRCSU ZCSE FLP.",
+        };
+        var Solutions = {
+            Jan26_2023: "MUHAMMAD ALI BEGAN FIGHTING AS A BOY AFTER A \nTHIEF STOLE HIS NEW RED SCHWINN BICYCLE.",
+            Jan24_2023: "MY WIFE ASKED IF I'D SEEN THE DOG BOWL. I WAS\nFLABBERGASTED. I NEVER KNEW IT COULD DO THAT!",
+            Jan19_2023: "VIDEO GAME PIONEER NINTENDO STARTED OVER A \nCENTURY AGO AS A PLAYING CARD MANUFACTURER.",
+            Jan17_2023: "ODDS ARE YOU CAN GET A DISCOUNTED PRICE ON A \nSLED, BUT YOU'LL PROBABLY NEED TOBOGGAN.",
+            Jan12_2023: "OF THE FOUR KINGS IN A TYPICAL DECK OF CARDS, ONLY \nTHE KING OF HEARTS ISN'T SPORTING A MUSTACHE.",
+            Jan10_2023: 'HORSES ARE "OBLIGATE NOSE BREATHERS," MEANING \nTHEY CANNOT BREATHE THROUGH THEIR MOUTHS.',
+            Jan05_2023: 'WHEN MY LAWYER BUDDY WISHES ME GOODBYE, HE \nSAYS, "SO LONG, BRO! I\'LL BE SUING YA!"',
+            Jan03_2023: "TIDES ARE FAR LARGER WHEN THE SUN, MOON AND EARTH \nALIGN DURING A NEW OR FULL MOON.",
+            Dec29_2022: 'CHEWBACCA\'S VOICE IN THE "STAR WARS" MOVIES \nCOMBINES BADGER, SEAL AND WALRUS SOUNDS.',
+            Dec27_2022: "THE AIRLINE QANTAS IS AN ACRONYM FOR THE QUEENSLAND \nAND NORTHERN TERRITORY AERIAL SERVICES.",
+            Dec20_2022: "WHY AREN'T THERE ANY BATHTUBS ON PIRATE SHIPS? \nBECAUSE, SILLY, PIRATES WASH UP ON SHORE.",
+            Dec15_2022: "BOTANICALLY SPEAKING, PUMPKINS AND OTHER GOURDS \nARE ACTUALLY FRUIT. THEY'RE TYPES OF BERRIES.",
+            Dec13_2022: "DESPITE THEIR SONGWRITING AND MUSICIANSHIP, \nNOT ONE OF THE BEATLES WAS ABLE TO READ MUSIC.",
+            Dec08_2022: "SODIUM, MERCURY AND SEVEN OTHER ELEMENTS HAVE NO \nLETTERS IN COMMON WITH THEIR SYMBOLS.",
+            Dec06_2022: "IT'S ALWAYS BEEN EASY FOR ME TO FALL ASLEEP. \nAT THIS POINT I CAN DO IT WITH MY EYES CLOSED.",
+            Dec01_2022: 'WHEN GUINEA PIGS ARE EXCITED, THEY "POPCORN" - \nPUSHING OFF THE GROUND WITH ALL FOUR FEET.',
+            Nov29_2022: "A COMPANY'S NEW CORDUROY PILLOWS ARE A HUGE \nHIT. THEY'RE REALLY MAKING HEADLINES!",
+            Nov22_2022: "JUPITER'S MOON GANYMEDE AND SATURN'S MOON TITAN \nARE LARGER THAN THE PLANET MERCURY.",
+            Nov17_2022: "WHEN HIPPOPOTAMUSES ARE UNDERWATER, THEIR \nEARS AND NOSTRILS CLOSE TO KEEP THE WATER OUT.",
+            Nov15_2022: "IS IT JUST ME, OR ARE THE FIRST FIVE WORKDAYS \nAFTER THE WEEKEND THE MOST DIFFICULT?",
+            Nov10_2022: 'MOTHER: "JIMMY, CAN YOU NAME TWO PRONOUNS?” \nSON: "WHO, ME?" MOTHER: "OH, NICE JOB!"',
+            Nov08_2022: "FINNISH PASSPORTS ARE ALSO FLIPBOOKS. FLIPPING \nTHE PAGES SHOWS A WALKING MOOSE ANIMATION.",
+            Nov03_2022: "READERS OF OUR NEW THESAURUS HAVE BEEN APATHETIC, \nUNRESPONSIVE, INDIFFERENT AND BORED.",
+            Nov01_2022: 'JAMES CAMERON SOLD "THE TERMINATOR" FOR JUST A \nDOLLAR ON THE CONDITION HE COULD DIRECT IT.',
+            Oct27_2022: "I'VE BEEN WANTING A BABY FOR A FEW YEARS, BUT MY \nWIFE ARGUES WITH ME. SHE INSISTS ON FOREVER.",
+            Oct25_2022: 'MATTEL WOULDN\'T LICENSE BARBIE TO "TOY STORY," \nWHICH IS WHY IT INCLUDES BO PEEP INSTEAD.',
+            Oct20_2022: "A MATHEMATICIAN SHEPHERD ROUNDED UP HIS \nFORTY-NINE SHEEP - AND THEN HE HAD FIFTY.",
+            Oct18_2022: "OVER FOUR THOUSAND MILES LONG, THE NILE RIVER \nFLOWS THROUGH ELEVEN AFRICAN COUNTRIES.",
+            Oct13_2022: 'SCOTT FITZGERALD, A POOR SPELLER, WROTE LETTERS \nTO HIS CLOSE FRIEND "EARNEST" HEMINGWAY.',
+            Oct11_2022: "MY BROTHER IS DEEPLY AFRAID OF NEGATIVE NUMBERS. \nHE'LL STOP AT NOTHING TO AVOID THEM.",
+            Oct06_2022: 'SOME REPARTEE ON "SESAME STREET": "ERNIE, DO YOU \nWANT TO GRAB SOME ICE CREAM?" "SURE, BERT!"',
+            Oct04_2022: "A DEAF QUARTERBACK INVENTED THE FOOTBALL HUDDLE \nTO BLOCK HIS CALLS FROM THE OPPONENTS' VIEW.",
+            Sep29_2022: "WHAT DO YOU GET WHEN YOU CROSS AN ELEPHANT WITH \nRHINOCEROS? GEE... ELEPHINO!",
+            Sep27_2022: "MERCURY, THE SMALLEST PLANET IN OUR SOLAR SYSTEM, \nIS ONLY SLIGHTLY LARGER THAN EARTH'S MOON.",
+            Sep22_2022: "SAN MARINO, MONACO, VATICAN CITY, LIECHTENSTEIN \nAND ANDORRA ARE THE ONLY NATIONS WITHOUT AIRPORTS.",
+            Sep20_2022: 'A FRIEND TOLD ME HE COULD NAME TWO STRUCTURES THAT \nHOLD WATER. I REPLIED, "WELL, DAM!"',
+            Sep15_2022: "NINTENDO NAMED THE ICONIC MARIO AFTER A \nSEATTLE LANDLORD TO WHOM IT OWED RENT.",
+            Sep13_2022: "I PARTICULARLY ENJOYED THE DOLPHINS WHEN I WENT \nTO SEAWORLD. FOR HOURS WE JUST CLICKED.",
+            Sep08_2022: "MORE PEOPLE HAVE WALKED ON THE MOON (TWELVE) THAN \nHAVE BEEN BORN IN ANTARCTICA (ELEVEN).",
+            Sep06_2022: "COPPER AND GOLD ARE THE ONLY NON-SILVERY-COLORED \nMETALS ON THE PERIODIC TABLE.",
+            Sep01_2022: '"WAITER, WE\'D LIKE A NICE BOTTLE OF CHARDONNAY, \nPLEASE." "WHAT YEAR, SIR?" "PREFERABLY RIGHT NOW."',
+            Aug30_2022: "SHERLOCK HOLMES HAS APPEARED IN MORE FILMS THAN ANY \nOTHER FICTIONAL CHARACTER. SECOND-MOST: DRACULA.",
+            Aug25_2022: "I SHOULD HAVE KNOWN THE SOVIET UNION WOULDN'T \nSURVIVE. THERE WERE LOTS OF RED FLAGS.",
+            Aug23_2022: 'BY FAR THE BEST-SELLING NOVEL OF ALL TIME, "DON \nQUIXOTE" HAS SOLD OVER HALF A BILLION COPIES.',
+            Aug11_2022: "WHAT COLOR OF STOCKINGS DO BEARS WEAR? OOH, \nTRICK QUESTION! THEY HAVE BEAR FEET.",
+            Aug09_2022: 'A ROMAN CENTURION WALKS INTO A TAVERN, RAISES TWO \nFINGERS AND SAYS, "FIVE BEERS, PLEASE."',
+            Aug04_2022: "TODAY A JOVIAL MAN IN A CLOWN SUIT HELD A DOOR \nOPEN FOR ME. I THOUGHT, WHAT A NICE JESTER.",
+            Aug02_2022: 'EVERY SCANDAL NOWADAYS IS NICKNAMED "SOMETHING-GATE," IMPLYING THAT WATERGATE WAS ABOUT WATER.',
+            Jul28_2022: 'WHAT DID JAY-Z JOCULARLY CALL HIS GIRLFRIEND BEFORE THEIR WEDDING? HIS "FEYONCE."',
+            Jul26_2022: "ALASKA NOT ONLY HAS THE LONGEST COASTLINE, IT HAS MORE COAST THAN EVERY OTHER STATE COMBINED.",
+            Jul21_2022: '"ADIEU" AND "ADIOS" BOTH MEAN, LITERALLY, "TO GOD," WHILE "GOODBYE" IS SHORT FOR "GOD BE WITH YE."',
+            Jul19_2022: "WHAT DO YOU CALL A ROCK GROUP WHOSE FOUR FAMOUS MEMBERS DON'T SING? MOUNT RUSHMORE.",
+            Jul14_2022: "THE BOTTOM OF LAKE ERIE IS HIGHER THAN THE SURFACE OF NEARBY LAKE ONTARIO.",
+            Jul07_2022: 'THE WORD "CHECKMATE" COMES FROM THE PERSIAN "SHAH MAT," WHICH MEANS "THE KING IS DEAD."',
+            Jul05_2022: "THE MYSTERIES OF BEST-SELLING AUTHOR AGATHA CHRISTIE HAVE SOLD WELL OVER TWO BILLION COPIES.",
+            Jun30_2022: "MERCURY EXPERIENCES TEMPERATURE SWINGS OF OVER A THOUSAND DEGREES FAHRENHEIT.",
+            Jun28_2022: "LIFEGUARDS WERE ABLE TO RESCUE THE DROWNING HIPPIE EVEN THOUGH HE WAS PRETTY FAR OUT.",
+            Jun23_2022: "JUPITER'S GREAT RED SPOT IS A STORM LARGER THAN EARTH THAT HAS RAGED FOR HUNDREDS OF YEARS.",
+            Jun21_2022: 'MOVIE PREVIEWS ARE CALLED "TRAILERS" BECAUSE THEY WERE ORIGINALLY SHOWN AFTER THE FEATURE.',
+            Jun16_2022: "I'LL ALWAYS HAVE A SPECIAL PLACE IN MY HEART FOR MY INTERVENTRICULAR SEPTUM.",
+            Jun14_2022: "ALBANY, NEW YORK, IS THE ONLY STATE CAPITAL THAT ENDS IN ITS OWN STATE'S POSTAL ABBREVIATION.",
+            Jun09_2022: "THE ROLLING STONES TOOK THEIR NAME FROM A SONG BY CHICAGO BLUESMAN MUDDY WATERS.",
+            Jun07_2022: "WHEN DOES A REGULAR JOKE TURN INTO A DAD JOKE? WHEN IT BECOMES APPARENT.",
+            Jun02_2022: "A GIANT STEEL WINDMILL DESCRIBES ITS TASTE IN ROCK MUSIC: \"I'M A BIG METAL FAN\".",
+            May31_2022: "THE HIGHEST AND LOWEST POINTS IN THE CONTINENTAL UNITED STATES ARE BOTH IN INYO COUNTY, CALIFORNIA.",
+            May24_2022: "MISSOURI IS THE ONLY STATE THAT BORDERS AS MANY OTHER STATES AS IT HAS LETTERS IN ITS NAME.",
+            May19_2022: "GLADIATORS IN ANCIENT ROME WERE PAID TO ENDORSE COMMERCIAL PRODUCTS.",
+            May17_2022: "FLAMINGOS ARE PINK DUE TO PIGMENTS IN THE MICROSCOPIC ALGAE AND BRINE SHRIMP THAT THEY EAT.",
+            May12_2022: "THE BEATLES NEARLY REUNITED AT ERIC CLAPTON'S WEDDING, WHERE ALL BUT JOHN LENNON PLAYED. ",
+            May10_2022: "I HAVE A CRIPPLING FEAR OF ELEVATORS, SO I'VE STARTED TAKING STEPS TO AVOID THEM.",
+            May05_2022: "WHEN WATER IS BOILED IN ZERO GRAVITY, THE VAPOR FORMS A LARGE BUBBLE AND CLINGS TO THE HEAT SOURCE.",
+            May03_2022: "OUR VETERINARIAN HAS PUT OUR DOG ON BIRTH CONTROL. IT'S PART OF AN ANTI-LITTER CAMPAIGN.",
+            Apr28_2022: "THE HYOID, A U-SHAPED BONE NEAR THE TONGUE, IS THE ONLY HUMAN BONE NOT CONNECTED TO ANOTHER.",
+            Apr26_2022: "(DAD JOKE ALERT.) HOW DOES THE MAN IN THE MOON GET HIS HAIR CUT? ECLIPSE IT.",
+            Apr21_2022: "SIX-THIRTY IS THE BEST POSSIBLE TIME ON A REGULAR ANALOG CLOCK - HANDS DOWN.",
+            Apr19_2022: 'THE WORD "ELBOW" EXISTED BEFORE SHAKESPEARE, BUT HIS IS THE FIRST KNOWN USE OF IT AS A VERB.',
+            Apr14_2022: "RIBOFLAVIN, AN ESSENTIAL B VITAMIN, WAS ORIGINALLY CALLED LACTOCHROME AND THEN VITAMIN G.",
+            Apr12_2022: "PLACING THE BOTTOM OF A HOT TRAY OF BROWNIES IN ICE WATER WILL MAKE THEM EXTRA RICH AND FUDGY.",
+            Apr07_2022: "THE GREEDY LOBSTERMAN WAS ACCUSED OF PROMOTING HIS OWN SHELLFISH INTERESTS.",
+            Apr05_2022: "THE AUDI LOGO'S FOUR RINGS REPRESENT GERMAN AUTOMAKERS THAT MERGED TO FORM ONE COMPANY.",
+            Mar31_2022: "PHOBOS, MARS'S INNER MOON, IS A MOSTLY DARK-GRAY OBJECT SHAPED LIKE A POTATO.",
+            Mar29_2022: "YOU WILL ALWAYS STAY YOUNG IF YOU GET EXERCISE, EAT PROPERLY AND LIE ABOUT YOUR AGE.",
+            Mar15_2022: "AN OSCAR WINNER MAY NOT SELL A STATUETTE BEFORE OFFERING IT TO THE ACADEMY FOR A DOLLAR.",
+        };
+    </script>
+    <script>
+        var cryptogram = "";
+        var cryptSolution;
+        var dashStrOut;
+        var normal = "";
+        var doneSolving = false;
+        var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var startTime = new Date();
+        console.log(startTime);
+        function fileSelect() {
+            startTime = new Date();
+            console.log(startTime);
+            cryptChoice = document.getElementById("cryptFile").value;
+            cryptogram = Crypt[cryptChoice];
+            normal = cryptogram;
+            cryptSolution = Solutions[cryptChoice];
+            console.log(cryptSolution);
+            setUp(cryptogram);
+
+        }
+    </script>
+    <title>cryptogram helper</title>
+    </script>
+    <script>
+        var cval = "";
+        var sval = "";
+        let objCrypt = {};
+        var objAlpha = {};
+        dashStrOut = "";
+        var typingModeEnabled = false;
+        var typingModeCursor = 0;
+        function setUp(normal) {
+            //Cryptogram Output actions
+            var cryptOut = document.getElementById("cryptOut");
+            console.log("cryptOut=" + cryptOut);
+            var outSolution = document.getElementById("done");
+            outSolution.innerHTML = "";
+
+            clearInputs();
+            objCrypt = createDict(normal);
+            cryptOut.innerHTML = outCryptandDash(normal, objCrypt);
+            //Alphabet Actions
+            var alphaOut = document.getElementById("alphaOut");
+            objAlpha = alphaDashCreate();
+            alphaOut = alphaDashOutput(objAlpha);
+            countOut.innerHTML = countLetter();
+            //clearInputs();
+            typingModeEnabled = false;
+            typingModeCursor = 0;
+        }
+        function clearInputs() {
+            enable();
+            var timeOut = document.getElementById("showTime");
+            timeOut.style.display = "none";
+            var inName = "solvLetter"
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            //alphaArray = alphabet.split("");
+            //alphaArray.forEach(function (letter) {
+            for (var letter of alphabet) {
+                inAccess = inName + letter;
+                inClear = document.getElementById(inAccess);
+                inClear.disabled = false;
+                inClear.value = "";
+            };
+        }
+
+        function outCryptandDash(cryptogram, cryptDict) {
+            enable();
+            let cryptStrOut = "";
+            dashStrOut = "";
+            count = 0;
+            //cryptogram.split("").forEach(function (letter) {
+            for (var letter of cryptogram) {
+                if (letter === "\n") {
+                    cryptStrOut += "";
+                    dashStrOut += "";
+                    countBr = cryptStrOut.length;
+                } else {
+                    cryptStrOut += `<span class="x" id="c${count}" onclick="setTypingModeCursor(${count})">` + letter + '</span>';
+                    dashStrOut += `<span class="y" id="s${count}" onclick="setTypingModeCursor(${count})">` + cryptDict[letter] + '</span>';
+                }
+                count++;
+            };
+            //console.log(cryptStrOut);
+            //console.log(dashStrOut);
+            var stringCombined = "<p>" + cryptStrOut.substring(0, countBr) + "</p><p>" +
+                "<span class='solveLetters'>" + dashStrOut.substring(0, countBr) + "</span>" + "</p>";
+            stringCombined += "<p>" + cryptStrOut.substring(countBr, countBr.length) +
+                "</p><p>" + "<span class='solveLetters'>" +
+                dashStrOut.substring(countBr, countBr.length) + "</span>" +
+                "</p>";
+            return stringCombined;
+        }
+        /*function doneOutput() {
+            outString = outCryptandDash(normal, objCrypt);
+            localStorage.setItem("solveStr", outString);
+            console.log(outString);
+            window.open("solution.html", "_blank");
+        }*/
+        function alphaDashOutput(objAlpha) {
+            alphaDashStr = "";
+            alphaStr = "";
+            outString = "";
+            Object.keys(objAlpha).forEach(function (key) {
+
+                alphaDashStr += objAlpha[key] + " ";
+                if (objAlpha[key] === "_") {
+                    alphaStr += key + " ";
+                } else {
+                    alphaStr += "<span class='solveAlpha'>" + key + " </span>";
+                }
+            });
+            var outString = "<p>" + alphaStr + "<br>" + "<span class='solveLetters'>" + alphaDashStr + "</span>" + "<br></p>"
+            //console.log(outString);
+            return outString;
+        }
+        function createDict(cryptogram) {
+            /**Function to create dictionary from crytogram
+             * returns dictionary of cryptogram letters and dashes*/
+            const obj = {};
+            let disableSub = "solvLetter";
+            let cryptArray = cryptogram.split("");
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            //cryptArray.forEach(function (letter) {
+            for (letter of cryptogram) {
+                if (alphabet.includes(letter)) {
+                    obj[letter] = "_";
+                } else {
+                    obj[letter] = letter;
+                }
+            };
+            //Disable unused inputs
+            //alphabet.split("").forEach(function (alpha) {
+            for (alpha of alphabet) {
+                if (cryptogram.includes(alpha) === false) {
+                    //console.log(alpha);
+                    disableLet = disableSub + alpha;
+                    document.getElementById(disableLet).disabled = true;
+                }
+            };
+            return obj;
+        }
+        function saveLetter(cval, sval) {
+            //console.log(cval, sval);
+            //console.log(normal, cryptogram);
+            //Make sure sval is in the alphabet and not any other character
+            enable();
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            alphabet.includes(sval) ? console.log("sval included") : sval = "_";
+            //Add if sval not in alphabet, then sval = "_"
+            objCrypt, objAlpha = letterReplace(cval, sval);
+            if (checkCompletion(objCrypt)) {
+                cryptOut.innerHTML = outCryptandDash(normal, objCrypt);
+                displayTime();
+                outSolution.innerHTML = dashStrOut;
+            }
+            cryptOut.innerHTML = outCryptandDash(normal, objCrypt);
+            if (typingModeEnabled) {
+                let nextCursor = typingModeCursor + 1;
+                for (; nextCursor < cryptogram.length; nextCursor++) {
+                    if (alphabet.indexOf(cryptogram[nextCursor]) >= 0 && objCrypt[cryptogram[nextCursor]] === '_') {
+                        break;
+                    }
+                }
+                if (nextCursor < cryptogram.length) {
+                    setTypingModeCursor(nextCursor);
+
+                } else {
+                    typingModeEnabled = false;
+
+                }
+            }
+        }
+        function letterReplace(cval, sval) {
+            /**Function to replace dash with letter in cryptogram dictionary */
+            //console.log(cval, sval);
+            let clearLetter = "solvLetter";
+            //console.log(cval, sval);
+            if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").includes(sval) === false) {
+                objCrypt[cval] = "_";
+                objAlpha[cval] = "_";
+                clearLetter = clearLetter + cval;
+                clearLetter = document.getElementById(clearLetter);
+                clearLetter.value = "";
+                return objCrypt, objAlpha;
+            }
+            //console.log(objCrypt);
+            //if (cval in objCrypt)
+            Object.keys(objCrypt).forEach(function (key) {
+                if (key === cval) {
+                    //for (const key in objCrypt)
+                    /*check if solution letter has been used already*/
+                    Object.keys(objCrypt).forEach(function (key2) {
+                        if (key2 !== cval && objCrypt[key2] === sval) {
+                            objCrypt[key2] = "_"
+                            objAlpha[key2] = "_"
+                            clearLetter = clearLetter + key2;
+                            console.log(key2, clearLetter);
+                            clearLetter = document.getElementById(clearLetter);
+                            //clearLetter = "";
+                            clearLetter.value = "";
+                            return objCrypt, objAlpha;
+                        }
+                    });
+
+                    objCrypt[key] = sval;
+                    objAlpha[key] = sval;
+
+                }
+            });
+            //console.log(objCrypt);
+            return objCrypt, objAlpha;
+        }
+        function alphaDashCreate() {
+            /**Function to create dictionary of alphabet and dashes */
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let objAlpha = {};
+            alphaStr = "";
+            alphaDashStr = "";
+            let alphaSplit = alphabet.split("");
+            alphaSplit.forEach(function (letter) {
+                objAlpha[letter] = "_";
+                alphaDashStr += objAlpha[letter] + " ";
+                alphaStr += letter + " ";
+
+            });
+            var outString = "<p>" + alphaStr + "<br>" + "<span class='solveLetters'>" +
+                alphaDashStr + "</span>" + "<br></p>"
+            return objAlpha;
+        }
+        function countLetter() {
+            enable();
+            //Function to calculate cryptogram letter count
+            //outputs a title and a string with the letter and count separated by commas
+            var countOut = document.getElementById("countOut");
+            const myCount = {};
+            var cryptogram = normal;
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            cryptogram.split("").forEach(function (letter) {
+                if (alphabet.includes(letter)) {
+                    myCount[letter] = 0;
+                }
+            });
+            cryptogram.split("").forEach(function (letter) {
+                if (alphabet.includes(letter)) {
+                    myCount[letter] += 1;
+                }
+            });
+            let arr = Object.values(myCount);
+            let max = Math.max(...arr);
+            console.log(max);
+            //Create sort function based on max value
+            outString = "";
+            const keys = Object.keys(myCount);
+            keys.forEach(function (letter) {
+                outString += letter;
+                outString += ":" + myCount[letter] + ", ";
+            });
+
+            var outCount = "Letter Count <br>" + sortLetterCount(myCount);
+            /*Needs to be sorted*/
+            //localStorage.setItem("outCount", outCount);
+            //window.open("countDisplay.html", "_blank")
+            return outCount;
+        }
+        function sortLetterCount(obj) {
+            enable();
+            let entries = Object.entries(obj);
+            let sorted = entries.sort((a, b) => b[1] - a[1]);
+            stringOut = "";
+            sorted.forEach(function (element) {
+                stringOut = stringOut + element[0] + ":" + element[1] + ", "
+            });
+            console.log(stringOut.substring(0, stringOut.length - 2));
+            return stringOut.substring(0, stringOut.length - 2);
+        }
+        function showCount() {
+            enable();
+            let outCount = countLetter();
+            var x = document.getElementById("countOut");
+            console.log(x.style.display);
+            if (x.style.display !== "block") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+        function displayTime() {
+            enable();
+            let endTime = new Date();
+            let finalTime = endTime - startTime;
+            let numSeconds = finalTime / (1000);
+            let finalMinutes = Math.floor(numSeconds / 60);
+            finalSeconds = numSeconds % 60;
+            finalMinutes = new Intl.NumberFormat('en-US', { style: 'unit', unit: 'minute', maximumSignificantDigits: 2 }).format(finalMinutes);
+
+            finalSeconds = new Intl.NumberFormat('en-US', { style: 'unit', unit: 'second', maximumSignificantDigits: 2 }).format(finalSeconds);
+            let showTime = document.getElementById("showTime");
+            //showTime.innerHTML = "Elapsed Time: "+finalMinutes+" minutes "+finalSeconds+" seconds";
+            console.log(endTime, startTime);
+            showTime.style.display = "block";
+            showTime.innerHTML = "Time to solution: " + finalMinutes + " " + finalSeconds;
+
+
+        }
+        function showSolved(cryptSolution) {
+            enable();
+            var solvOut = document.getElementById("done");
+            solvOut.innerHTML = cryptSolution;
+
+        }
+        function checkCompletion(obj) {
+            enable();
+            let check = true;
+            Object.keys(objCrypt).forEach(function (key) {
+                if (alphabet.includes(key) && objCrypt[key] === "_") {
+                    //console.log(key, alphabet.includes(key) && objCrypt[key]==="_");
+                    check = false;
+                };
+            });
+            if (check) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function checkSolved() {
+            enable();
+            //compare dashStrOut to cryptSolution
+            var outSolution = document.getElementById("done");
+            let outNoSolution;
+            console.log(dashStrOut, cryptSolution);
+            dashArray = dashStrOut.split(" ");
+            solutionCheck = true;
+            solutionArray = cryptSolution.split(" ");
+            solutionLength = solutionArray.length;
+            dashArrayLength = dashArray.length;
+            if (dashArrayLength !== solutionLength) {
+                console.log(dashArrayLength, solutionLength);
+                return false;
+            } else {
+                console.log(dashArrayLength, solutionLength);
+                return true;
+            }
+            let countSolved;
+            let missedWords = [];
+            countSolved = compareSolution(dashArray, solutionArray);
+            let misSolved = dashArrayLength - countSolved;
+            if (misSolved === 0) {
+                console.log("Congratulations Today's Cryptogram has been solved.");
+                outSolution.innerHTML = cryptSolution;
+            } else {
+                console.log("You are missing " + countSolved + " words.");
+                outNoSolution = misSolved + " out of " + solutionArray.length + " words are incorrect."
+
+                outSolution.innerHTML = outNoSolution;
+            }
+            function compareSolution(solvedCrypt, solutionCrypt) {
+                let count = 0;
+                let missedWordIndex = [];
+                for (let i = 0; i < solutionCrypt.length; i++) {
+                    solvedCrypt[i] === solutionCrypt[i] ?
+                        count++ :
+                        console.log(i + "th element is not correct" +
+                            solutionCrypt[i] + " " + solvedCrypt[i]);
+                    missedWordIndex.push(solutionCrypt[i]);
+                }
+                return count;
+            }
+        }
+        function highlight() {
+
+            const active = document.activeElement;
+            const cval = active ? active.id.substring('solvLetter'.length) : '';
+            console.log(`${typingModeCursor}, ${cryptogram[typingModeCursor]}, "${cval}"`);
+            if (cval !== '' && cryptogram[typingModeCursor] !== cval) {
+                typingModeEnabled = false;
+            }
+            console.log(typingModeEnabled);
+            for (let i = 0; i < cryptogram.length; i++) {
+                if (cryptogram[i] === '\n') {
+                    continue;
+                }
+                let color = null;
+                if (typingModeEnabled && i === typingModeCursor) {
+                    color = 'lightblue';
+                } else if (cryptogram[i] === cval) {
+                    color = 'yellow';
+                }
+                document.getElementById('c' + i).style.backgroundColor = color;
+                document.getElementById('s' + i).style.backgroundColor = color;
+            }
+
+        }
+        function setTypingModeCursor(index) {
+            disable();
+            if ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(cryptogram[index]) < 0) {
+                return;
+            }
+            typingModeEnabled = true;
+            typingModeCursor = index;
+            const inputField = document.getElementById('solvLetter' + cryptogram[index]);
+            inputField.focus({
+                preventScroll: true
+            });
+        }
+    </script>
+    <style type="text/css">
+        input {
+            /*outline-style:auto;*/
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+            font-family: Lucida Console, sans-serif;
+        }
+
+        label {
+            font-family: Lucida Console, sans-serif;
+        }
+
+        .solveLetters {
+            font-family: Lucida Console, sans-serif;
+            color: rgb(106, 106, 149);
+            text-align: left;
+        }
+
+        .solveAlpha {
+            font-family: Lucida Console, sans-serif;
+            color: rgb(106, 216, 207);
+        }
+
+        .selectForm {
+            position: absolute;
+            top: 0%;
+            width: 90%;
+            text-align: right;
+        }
+
+        #countOut {
+            display: none;
+        }
+
+        .cryptAlign {
+            text-align: start;
+            text-indent: 5%;
+        }
+
+        .countDisplay {
+            margin-left: 10%;
+            margin-right: 20%;
+        }
+
+        fieldset input {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+
+    <!--h1>Pick the Cryptogram to Solve</h1-->
+    <div id="menuCreate"></div>
+    <!--span id="menuCreate"></span-->
+    <script>
+
+        let menuOutput = document.getElementById("menuCreate");
+        console.log(document.getElementById("menuCreate"));
+        menuOutput.innerHTML = menuCreateOut();
+
+        function menuCreateOut() {
+            var Months = {
+                //Jan: "January", Feb: "February", Mar: "March", Apr: "April", May: "May", Jun:"June",
+                //Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December"
+                Jan: "Jan", Feb: "Feb", Mar: "Mar", Apr: "Apr", May: "May", Jun: "Jun",
+                Jul: "Jul", Aug: "Aug", Sep: "Sept", Oct: "Oct", Nov: "Nov", Dec: "Dec"
+            };
+            let dateString = "Date Published";
+            let menuString = "<form action='' class='selectForm'><select class='dMenu' id='cryptFile' oninput='fileSelect()'>";
+            menuString += "<option>" + dateString + "</option>";
+            //Get first key for first month
+            for (var k in Crypt) {
+                var firstKey = k.substring(0, 3);
+                var firstYear = k.slice(-4,);
+                break;
+            }
+            menuString += "<optgroup label=" + Months[firstKey] + firstYear + ">";
+            Object.keys(Crypt).forEach(function (key) {
+                nextKey = key.substring(0, 3);
+                if (nextKey !== firstKey) {
+                    firstKey = nextKey;
+                    menuString += "</optgroup><optgroup label=" + Months[nextKey] + key.slice(-4,) + ">";
+                }
+                //<option value="Apr28_2022">28Apr2022</option>
+                var cryptDate
+                if (key.substring(3, 4) === '0') {
+                    cryptDate = " " + key.substring(4, 5);
+                } else {
+                    cryptDate = key.substring(3, 5);
+                }
+                menuString += "<option value='" + key + "'>" + Months[key.substring(0, 3)] + " " + cryptDate + "</option>"
+            });
+            menuString += "</optgroup></select></form>";
+            console.log("menuString " + menuString);
+
+            return menuString;
+        }
+    </script>
+    <!--form action="" class="selectForm">
+        <select id="cryptFile" oninput="fileSelect()">
+            <option>Date published</option>
+            <optgroup label="July">
+                <option value="July05_2022">05July2022</option>
+            </optgroup>
+            <optgroup label="June">
+                <option value="June28_2022">28June2022</option>
+                <option value="June23_2022">23June2022</option>
+                <option value="June21_2022">21June2022</option>
+                <option value="June16_2022">16June2022</option>
+                <option value="June14_2022">14June2022</option>
+                <option value="June09_2022">09June2022</option>
+                <option value="June07_2022">07June2022</option>
+                <option value="June02_2022">02June2022</option>
+            </optgroup>
+            <optgroup label="May">
+                <option value="May31_2022">31May2022</option>
+                <option value="May24_2022">24May2022</option>
+                <option value="May19_2022">19May2022</option>
+                <option value="May17_2022">17May2022</option>
+                <option value="May12_2022">12May2022</option>
+                <option value="May10_2022">10May2022</option>
+                <option value="May05_2022">05May2022</option>
+                <option value="May03_2022">03May2022</option>
+            </optgroup>
+            <optgroup label="April">
+                <option value="Apr28_2022">28Apr2022</option>
+                <option value="Apr26_2022">26Apr2022</option>
+                <option value="Apr21_2022">21Apr2022</option>
+                <option value="Apr19_2022">19Apr2022</option>
+                <option value="Apr14_2022">14Apr2022</option>
+                <option value="Apr12_2022">12Apr2022</option>
+                <option value="Apr07_2022">07Apr2022</option>
+                <option value="Apr05_2022">05Apr2022</option>
+            </optgroup>
+            <optgroup label="March">
+                <option value="Mar31_2022">31Mar2022</option>
+                <option value="Mar29_2022">29Mar2022</option>
+                <option value="Mar15_2022">15Mar2022</option>
+            </optgroup>
+        </select>
+    </form-->
+    <form>
+
+        <div id="cryptOut" class="cryptAlign">Choose a date from the dropdown menu</div><br>
+        <div id="showTime" class="countDisplay"></div><br>
+        <div id="done" class="countDisplay" style="color: rgb(48, 132, 52);"></div><br>
+
+        <div id="inputs" class="container cryptogram-container">
+            <div class="row">
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterA">A</label>
+                </div>
+
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterA" name="solvLetterA" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('A', document.getElementById('solvLetterA').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterB">B</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" style="text-transform:uppercase" id="solvLetterB"
+                        name="solvLetterB" value="" maxlength="1" size="2"
+                        oninput="saveLetter('B', document.getElementById('solvLetterB').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterC">C</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" style="text-transform:uppercase" id="solvLetterC"
+                        name="solvLetterC" value="" maxlength="1" size="2"
+                        oninput="saveLetter('C', document.getElementById('solvLetterC').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterD">D</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" style="text-transform:uppercase" id="solvLetterD"
+                        name="solvLetterD" value="" maxlength="1" size="2"
+                        oninput="saveLetter('D', document.getElementById('solvLetterD').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterE">E</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterE" name="solvLetterE" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('E', document.getElementById('solvLetterE').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterF">F</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterF" name="solvLetterF" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('F', document.getElementById('solvLetterF').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterG">G</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterG" name="solvLetterG" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('G', document.getElementById('solvLetterG').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterH">H</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterH" name="solvLetterH" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('H', document.getElementById('solvLetterH').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterI">I</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterI" name="solvLetterI" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('I', document.getElementById('solvLetterI').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterJ">J</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterJ" name="solvLetterJ" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('J', document.getElementById('solvLetterJ').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterK">K</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterK" name="solvLetterK" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('K', document.getElementById('solvLetterK').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterL">L</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterL" name="solvLetterL" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('L', document.getElementById('solvLetterL').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterM">M</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterM" name="solvLetterM" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('M', document.getElementById('solvLetterM').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterN">N</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterN" name="solvLetterN" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('N', document.getElementById('solvLetterN').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterO">O</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterO" name="solvLetterO" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('O', document.getElementById('solvLetterO').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterP">P</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterP" name="solvLetterP" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('P', document.getElementById('solvLetterP').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterQ">Q</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterQ" name="solvLetterQ" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('Q', document.getElementById('solvLetterQ').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterR">R</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterR" name="solvLetterR" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('R', document.getElementById('solvLetterR').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterS">S</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterS" name="solvLetterS" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('S', document.getElementById('solvLetterS').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterT">T</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterT" name="solvLetterT" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('T', document.getElementById('solvLetterT').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterU">U</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterU" name="solvLetterU" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('U', document.getElementById('solvLetterU').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterV">V</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterV" name="solvLetterV" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('V', document.getElementById('solvLetterV').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterW">W</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterW" name="solvLetterW" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('W', document.getElementById('solvLetterW').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterX">X</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterX" name="solvLetterX" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('X', document.getElementById('solvLetterX').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterY">Y</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterY" name="solvLetterY" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('Y', document.getElementById('solvLetterY').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <label class="letters" for="solvLetterZ">Z</label>
+                </div>
+                <div class="col-3 col-lg-1 col-md-2 col-sm-3">
+                    <input type="text" class="theInputs" id="solvLetterZ" name="solvLetterZ" value="" maxlength="1"
+                        size="2" style="text-transform:uppercase; text-align:center"
+                        oninput="saveLetter('Z', document.getElementById('solvLetterZ').value.toUpperCase())"
+                        onfocus="highlight()" onblur="highlight()" autocomplete="off" />
+                </div>
+
+            </div>
+        </div>
+
+        <br>
+
+        <div class="containe-fluid buttons-container">
+            <div class="row">
+                <p align="center">
+                    <input type="button" name="startover" value="Startover" style="font-weight:normal; 
+            background-color: rgb(103, 180, 206) "
+                        class="col-xs-1 col-sm-2 col-md-2 col-lg-3 col-4 buttons btn-1 button1" onclick="setUp(normal)">
+                    <input type="button" name="done" value="Solution" style="font-weight:normal; 
+            background-color:  rgb(143, 88, 129); color: white"
+                        class="col-xs-2 col-sm-2 col-md-2 col-lg-4 col-4 buttons btn-2 button2" ,
+                        onclick=showSolved(cryptSolution)>
+                    <input type="button" name="letterCount" style="font-weight:normal;
+            background-color:  rgb(103, 180, 206)" value="Show/Hide Count"
+                        class="col-xs-1 col-sm-3 col-md-3 col-lg-3 col-6 buttons button_3 btn-1 button3"
+                        onclick="showCount()">
+                </p>
+            </div>
+        </div>
+    </form>
+    <style>
+
+    </style>
+    <!--div id="countOut"></div-->
+    <div id="countOut" class="countDisplay"></div>
+
+</body>
+
+</html>
