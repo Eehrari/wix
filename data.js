@@ -338,3 +338,11 @@ var Solutions = {
   Mar15_2022:
     "AN OSCAR WINNER MAY NOT SELL A STATUETTE BEFORE OFFERING IT TO THE ACADEMY FOR A DOLLAR.",
 };
+
+function getCrypt() {
+  return Crypt;
+}
+
+function getSolution() {
+  return Solutions;
+}
